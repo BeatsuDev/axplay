@@ -9,7 +9,9 @@ import ResizableElement from "@/components/ResizableElement.vue";
                 edge="right"
                 class="border-r-2 border-gray-700 min-w-36 max-w-[50%]"
             >
-                <slot name="aside"></slot>
+                <aside>
+                    <slot name="aside"></slot>
+                </aside>
             </ResizableElement>
             <main class="flex-1">
                 <slot name="main"></slot>
@@ -19,7 +21,9 @@ import ResizableElement from "@/components/ResizableElement.vue";
             edge="top"
             class="border-t-2 border-gray-700 min-h-16 max-h-36"
         >
-            <slot name="footer"></slot>
+            <footer>
+                <slot name="footer"></slot>
+            </footer>
         </ResizableElement>
     </div>
 </template>
