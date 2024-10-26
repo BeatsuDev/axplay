@@ -5,7 +5,8 @@ export default {
     content: ["./src/**/*.{html,vue,js,ts,jsx,tsx}"],
     theme: {
         colors: {
-            primary: colors.sky,
+            primary: colors.amber,
+            secondary: colors.teal,
             gray: colors.neutral,
         },
     },
