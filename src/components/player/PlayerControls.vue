@@ -1,5 +1,5 @@
 <template>
-    <div class="flex gap-3 items-center p-2">
+    <div class="flex gap-3 justify-center items-center p-2">
         <PlayerButton> <ArrowsRightLeftIcon class="w-4 h-4" /> </PlayerButton>
         <PlayerButton> <BackwardIcon class="w-4 h-4" /> </PlayerButton>
         <PlayerButton> <PlayIcon class="w-7 h-7" /> </PlayerButton>
