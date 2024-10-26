@@ -9,7 +9,7 @@ import ResizableElement from "@/components/ResizableElement.vue";
                 edge="right"
                 class="border-r-2 border-gray-700 min-w-36 max-w-[50%]"
             >
-                <aside>
+                <aside class="h-full w-full">
                     <slot name="aside"></slot>
                 </aside>
             </ResizableElement>
@@ -19,9 +19,9 @@ import ResizableElement from "@/components/ResizableElement.vue";
         </div>
         <ResizableElement
             edge="top"
-            class="border-t-2 border-gray-700 min-h-16 max-h-36"
+            class="border-t-2 border-gray-700 min-h-28 max-h-36"
         >
-            <footer>
+            <footer class="h-full w-full">
                 <slot name="footer"></slot>
             </footer>
         </ResizableElement>
