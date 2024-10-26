@@ -80,13 +80,13 @@ function getSize(event: MouseEvent) {
     const boundingBox = container.value.getBoundingClientRect();
     switch (props.edge) {
         case "top":
-            return event.clientY - boundingBox.bottom;
+            return Math.abs(event.clientY - boundingBox.bottom);
         case "right":
-            return event.clientX - boundingBox.left;
+            return Math.abs(event.clientX - boundingBox.left);
         case "bottom":
-            return event.clientY - boundingBox.top;
+            return Math.abs(event.clientY - boundingBox.top);
         case "left":
-            return event.clientX - boundingBox.right;
+            return Math.abs(event.clientX - boundingBox.right);
         default:
             return props.edge satisfies never;
     }
