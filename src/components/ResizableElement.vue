@@ -33,8 +33,6 @@ function classForEdge(edge: "top" | "right" | "bottom" | "left") {
 const container = ref<HTMLDivElement | null>(null);
 
 const props = defineProps<{
-    min?: number;
-    max?: number;
     edge: "top" | "right" | "bottom" | "left";
 }>();
 
@@ -54,9 +52,6 @@ function resize(event: MouseEvent) {
     }
 
     const currentSize = getSize(event);
-
-    if (props.min && currentSize < (props.min ?? 0)) return;
-    if (props.max && currentSize > (props.max ?? 0)) return;
 
     switch (props.edge) {
         case "top":
