@@ -8,12 +8,16 @@
                         alt="axplay"
                         class="w-full max-w-48 mx-auto"
                     />
-                    <NavigationButton class="w-full mt-4"
+                    <NavigationButton
+                        @click="addMusictoCollection"
+                        class="w-full mt-4"
                         >Import Music</NavigationButton
                     >
                 </div>
             </template>
-            <template #main> <MusicCollectionPage /> </template>
+            <template #main>
+                <MusicCollectionPage :collection="musicCollection" />
+            </template>
             <template #footer>
                 <div
                     class="flex flex-col justify-between h-full items-center p-4 pt-2"
@@ -48,7 +52,12 @@ import PlayerProgress from "./components/player/PlayerProgress.vue";
 import NavigationButton from "./components/NavigationButton.vue";
 
 import { ref } from "vue";
+import { open } from "@tauri-apps/plugin-dialog";
+import { readFile } from "@tauri-apps/plugin-fs";
+import { parseBuffer } from "music-metadata";
+import { MusicFilePath, useMusicCollection } from "./composables/music";
 
+// Player state
 const progress = ref<number>(15 * 1000);
 const length = ref<number>(200 * 1000);
 
@@ -59,4 +68,38 @@ function msToHumanReadable(ms: number) {
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
+
+// Import music logic
+async function addMusictoCollection() {
+    const selected = await open({
+        multiple: false,
+        directory: false,
+        filters: [{ name: "Music", extensions: ["mp3", "wav", "flac", "ogg"] }],
+    });
+
+    if (!selected) return;
+    if (
+        !["mp3", "wav", "flac", "ogg"].includes(selected.split(".").pop() ?? "")
+    )
+        return;
+
+    const musicFilePath = selected as MusicFilePath;
+    const fileData = await readFile(musicFilePath);
+    const metadata = await parseBuffer(fileData);
+
+    musicCollection.value.push({
+        filePath: musicFilePath,
+        title: metadata.common.title || "Unknown",
+        artists: metadata.common.artists || ["Unknown"],
+        album: metadata.common.album || "Unknown",
+        duration: metadata.format.duration || 0,
+        sampleRate: metadata.format.sampleRate || 0,
+    });
+
+    await saveCollection();
+}
+
+// Storing music logic
+const { data: musicCollection, save: saveCollection } =
+    useMusicCollection("collection.json");
 </script>
