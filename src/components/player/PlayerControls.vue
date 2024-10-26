@@ -15,8 +15,16 @@
         <PlayerButton>
             <ForwardIcon class="w-4 h-4" />
         </PlayerButton>
-        <PlayerButton>
-            <ArrowPathRoundedSquareIcon class="w-4 h-4" />
+        <PlayerButton @click="incrementRepeat">
+            <ArrowPathIcon
+                v-if="repeat !== 'all'"
+                class="w-4 h-4"
+                :class="{ 'fill-primary-500': repeat !== 'none' }"
+            />
+            <ArrowPathRoundedSquareIcon
+                v-else
+                class="w-4 h-4 fill-primary-500"
+            />
         </PlayerButton>
     </div>
 </template>
@@ -28,9 +36,29 @@ import {
     PlayIcon,
     PauseIcon,
     ForwardIcon,
+    ArrowPathIcon,
     ArrowPathRoundedSquareIcon,
 } from "@heroicons/vue/16/solid";
 import PlayerButton from "./PlayerButton.vue";
 
 const playing = defineModel<boolean>("playing", { required: true });
+
+// Repeat logic
+const repeat = defineModel<"none" | "one" | "all">("repeat", {
+    required: true,
+});
+
+function incrementRepeat() {
+    switch (repeat.value) {
+        case "none":
+            repeat.value = "one";
+            break;
+        case "one":
+            repeat.value = "all";
+            break;
+        case "all":
+            repeat.value = "none";
+            break;
+    }
+}
 </script>

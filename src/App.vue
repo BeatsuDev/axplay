@@ -29,6 +29,7 @@
                         <div>Left controls</div>
                         <PlayerControls
                             v-model:playing="playing"
+                            v-model:repeat="repeat"
                         />
                         <div>Right controls</div>
                     </div>
@@ -107,6 +108,7 @@ const currentSong = ref<MusicData | null>(null);
 
 const progress = ref<number>(0);
 const playing = ref<boolean>(false);
+const repeat = ref<"none" | "one" | "all">("none");
 
 function formatTime(seconds: number) {
     const minutes = Math.floor(seconds / 60);
