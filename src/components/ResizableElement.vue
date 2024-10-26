@@ -1,6 +1,19 @@
 <template>
-    <div ref="container" class="relative">
-        <slot></slot>
+    <div
+        ref="container"
+        class="relative"
+        :style="{
+            width:
+                (edge === 'left' || edge === 'right') && sizeRatio
+                    ? `${100 * sizeRatio}%`
+                    : 'auto',
+            height:
+                (edge === 'top' || edge === 'bottom') && sizeRatio
+                    ? `${100 * sizeRatio}%`
+                    : 'auto',
+        }"
+    >
+        <slot class=""></slot>
         <div
             @mousedown="startResize"
             @mouseup="stopResize"
@@ -10,10 +23,16 @@
 </template>
 
 <script setup lang="ts">
-/**
- * Div must be positioned relative or absolute.
- */
-import { ref } from "vue";
+import { useElementBounding } from "@vueuse/core";
+import { onUnmounted, ref, defineModel } from "vue";
+
+const props = defineProps<{
+    min?: number; // Minimum size in percentage of parent size
+    max?: number; // Maximum size in percentage of parent size
+    edge: "top" | "right" | "bottom" | "left";
+}>();
+
+const sizeRatio = defineModel<number>();
 
 function classForEdge(edge: "top" | "right" | "bottom" | "left") {
     switch (edge) {
@@ -30,13 +49,9 @@ function classForEdge(edge: "top" | "right" | "bottom" | "left") {
     }
 }
 
+// Resizing logic
 const container = ref<HTMLDivElement | null>(null);
-
-const props = defineProps<{
-    min?: number;
-    max?: number;
-    edge: "top" | "right" | "bottom" | "left";
-}>();
+const { top, right, bottom, left } = useElementBounding(container);
 
 function startResize() {
     window.addEventListener("mousemove", resize);
@@ -49,46 +64,43 @@ function stopResize() {
 }
 
 function resize(event: MouseEvent) {
+    sizeRatio.value = clampToRange(getSizeFromClick(event));
+}
+
+function getSizeFromClick(event: MouseEvent) {
     if (!container.value) {
-        throw Error("Can not resize element. Container was not loaded.");
+        throw new Error("Cannot resize element. Container is not mounted.");
     }
 
-    const currentSize = getSize(event);
-
-    if (props.min && currentSize < (props.min ?? 0)) return;
-    if (props.max && currentSize > (props.max ?? 0)) return;
-
+    const parentSize = container.value?.parentElement!.getBoundingClientRect();
     switch (props.edge) {
         case "top":
+            return Math.abs(event.clientY - bottom.value) / parentSize.height;
         case "bottom":
-            container.value.style.height = `${currentSize}px`;
-            break;
+            return Math.abs(event.clientY - top.value) / parentSize.height;
         case "right":
+            return Math.abs(event.clientX - left.value) / parentSize.width;
         case "left":
-            container.value.style.width = `${currentSize}px`;
-            break;
+            return Math.abs(event.clientX - right.value) / parentSize.width;
         default:
             props.edge satisfies never;
     }
+
+    return 0;
 }
 
-function getSize(event: MouseEvent) {
-    if (!container.value) {
-        throw Error("Can not resize element. Container was not loaded.");
+function clampToRange(value: number) {
+    if (props.min !== undefined && value < props.min) {
+        return props.min;
     }
-
-    const boundingBox = container.value.getBoundingClientRect();
-    switch (props.edge) {
-        case "top":
-            return event.clientY - boundingBox.bottom;
-        case "right":
-            return event.clientX - boundingBox.left;
-        case "bottom":
-            return event.clientY - boundingBox.top;
-        case "left":
-            return event.clientX - boundingBox.right;
-        default:
-            return props.edge satisfies never;
+    if (props.max !== undefined && value > props.max) {
+        return props.max;
     }
+    return value;
 }
+
+onUnmounted(() => {
+    window.removeEventListener("mousemove", resize);
+    window.removeEventListener("mouseup", stopResize);
+});
 </script>

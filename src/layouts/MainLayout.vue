@@ -7,7 +7,8 @@ import ResizableElement from "@/components/ResizableElement.vue";
         <div class="flex flex-1 items-stretch">
             <ResizableElement
                 edge="right"
-                class="border-r-2 border-gray-700 min-w-32 max-w-1/2"
+                :max="0.5"
+                class="border-r-2 border-gray-700 min-w-36 max-w-1/2"
             >
                 <slot name="aside"></slot>
             </ResizableElement>
