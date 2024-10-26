@@ -2,8 +2,13 @@
     <div
         class="flex gap-3 justify-center items-center p-2 [&>*>*]:hover:[&>*]:fill-primary-400"
     >
-        <PlayerButton>
-            <ArrowsRightLeftIcon class="w-4 h-4" />
+        <PlayerButton @click="shuffle = !shuffle">
+            <ArrowsRightLeftIcon
+                class="w-4 h-4"
+                :class="{
+                    'fill-primary-500': shuffle,
+                }"
+            />
         </PlayerButton>
         <PlayerButton>
             <BackwardIcon class="w-4 h-4" />
@@ -61,4 +66,7 @@ function incrementRepeat() {
             break;
     }
 }
+
+// Shuffle logic
+const shuffle = defineModel<boolean>("shuffle", { required: true });
 </script>

@@ -30,6 +30,7 @@
                         <PlayerControls
                             v-model:playing="playing"
                             v-model:repeat="repeat"
+                            v-model:shuffle="shuffle"
                         />
                         <div>Right controls</div>
                     </div>
@@ -109,6 +110,7 @@ const currentSong = ref<MusicData | null>(null);
 const progress = ref<number>(0);
 const playing = ref<boolean>(false);
 const repeat = ref<"none" | "one" | "all">("none");
+const shuffle = ref<boolean>(false);
 
 function formatTime(seconds: number) {
     const minutes = Math.floor(seconds / 60);
