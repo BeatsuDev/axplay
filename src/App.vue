@@ -7,7 +7,11 @@
                 <div
                     class="flex flex-col justify-between h-full items-center p-4 pt-2"
                 >
-                    <PlayerControls />
+                    <div class="flex justify-between w-full">
+                        <div>Left controls</div>
+                        <PlayerControls />
+                        <div>Right controls</div>
+                    </div>
                     <div
                         class="flex justify-between w-full text-sm items-center gap-3"
                     >
