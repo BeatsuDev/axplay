@@ -27,7 +27,9 @@
                 >
                     <div class="flex justify-between w-full">
                         <div>Left controls</div>
-                        <PlayerControls />
+                        <PlayerControls
+                            v-model:playing="playing"
+                        />
                         <div>Right controls</div>
                     </div>
                     <div
@@ -104,6 +106,7 @@ const { data: musicCollection, save: saveCollection } =
 const currentSong = ref<MusicData | null>(null);
 
 const progress = ref<number>(0);
+const playing = ref<boolean>(false);
 
 function formatTime(seconds: number) {
     const minutes = Math.floor(seconds / 60);

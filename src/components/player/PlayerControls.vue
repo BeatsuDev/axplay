@@ -8,8 +8,9 @@
         <PlayerButton>
             <BackwardIcon class="w-4 h-4" />
         </PlayerButton>
-        <PlayerButton>
-            <PlayIcon class="w-7 h-7" />
+        <PlayerButton @click="playing = !playing">
+            <PlayIcon v-if="!playing" class="w-7 h-7" />
+            <PauseIcon v-else class="w-7 h-7" />
         </PlayerButton>
         <PlayerButton>
             <ForwardIcon class="w-4 h-4" />
@@ -25,8 +26,11 @@ import {
     ArrowsRightLeftIcon,
     BackwardIcon,
     PlayIcon,
+    PauseIcon,
     ForwardIcon,
     ArrowPathRoundedSquareIcon,
 } from "@heroicons/vue/16/solid";
 import PlayerButton from "./PlayerButton.vue";
+
+const playing = defineModel<boolean>("playing", { required: true });
 </script>
