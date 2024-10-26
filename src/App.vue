@@ -16,8 +16,8 @@
 <script setup lang="ts">
 import MainLayout from "./layouts/MainLayout.vue";
 import MusicCollectionPage from "./pages/MusicCollectionPage.vue";
-import PlayerControls from "./components/PlayerControls.vue";
-import PlayerProgress from "./components/PlayerProgress.vue";
+import PlayerControls from "./components/player/PlayerControls.vue";
+import PlayerProgress from "./components/player/PlayerProgress.vue";
 
 import { ref } from "vue";
 
