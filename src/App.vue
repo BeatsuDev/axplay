@@ -96,7 +96,7 @@ async function addMusictoCollection() {
         sampleRate: metadata.format.sampleRate || 0,
     });
 
-    await saveCollection();
+    saveCollection();
 }
 
 // Storing music logic

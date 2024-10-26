@@ -1,4 +1,11 @@
-import { readFile, writeFile } from "@tauri-apps/plugin-fs";
+import { appDataDir } from "@tauri-apps/api/path";
+import {
+    mkdir,
+    exists,
+    BaseDirectory,
+    readFile,
+    writeFile,
+} from "@tauri-apps/plugin-fs";
 import { ref } from "vue";
 
 export type MusicFilePath = `${string}.${"mp3" | "wav" | "flac" | "ogg"}`;
@@ -15,24 +22,32 @@ export function useMusicCollection(collectionPath: `${string}.json`) {
     const data = ref<MusicData[]>([]);
 
     async function save(): Promise<void> {
-        await writeFile(
+        if (!(await exists(await appDataDir()))) {
+            console.info(
+                "App directory does not exist. Creating directory:",
+                await appDataDir()
+            );
+            await mkdir(await appDataDir());
+        }
+        console.debug("Saving music collection data to file:", collectionPath);
+        console.debug("Data:", data.value);
+        return writeFile(
             collectionPath,
-            Buffer.from(JSON.stringify(data.value))
+            new TextEncoder().encode(JSON.stringify(data.value)),
+            { baseDir: BaseDirectory.AppData, create: true }
         );
     }
 
     async function refresh(): Promise<MusicData[]> {
         let collectionData: string;
         try {
-            const byteFile = await readFile(collectionPath);
-            collectionData = Buffer.from(byteFile).toString();
-        } catch (error) {
-            console.error(
-                "Error loading file " +
-                    collectionPath +
-                    " when refreshing music data:",
-                error
-            );
+            const byteFile = await readFile(collectionPath, {
+                baseDir: BaseDirectory.AppData,
+            });
+            collectionData = new TextDecoder().decode(byteFile);
+        } catch (error: unknown) {
+            // Probably just haven't saved any data yet
+            console.warn("Could not read music collection file:", error);
             return [];
         }
 
