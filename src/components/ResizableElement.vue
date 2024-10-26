@@ -27,8 +27,6 @@ import { useElementBounding } from "@vueuse/core";
 import { onUnmounted, ref, defineModel } from "vue";
 
 const props = defineProps<{
-    min?: number; // Minimum size in percentage of parent size
-    max?: number; // Maximum size in percentage of parent size
     edge: "top" | "right" | "bottom" | "left";
 }>();
 
@@ -64,7 +62,7 @@ function stopResize() {
 }
 
 function resize(event: MouseEvent) {
-    sizeRatio.value = clampToRange(getSizeFromClick(event));
+    sizeRatio.value = getSizeFromClick(event);
 }
 
 function getSizeFromClick(event: MouseEvent) {
@@ -87,16 +85,6 @@ function getSizeFromClick(event: MouseEvent) {
     }
 
     return 0;
-}
-
-function clampToRange(value: number) {
-    if (props.min !== undefined && value < props.min) {
-        return props.min;
-    }
-    if (props.max !== undefined && value > props.max) {
-        return props.max;
-    }
-    return value;
 }
 
 onUnmounted(() => {
