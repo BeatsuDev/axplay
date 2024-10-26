@@ -8,7 +8,17 @@
                     class="flex flex-col justify-between h-full items-center p-4 pt-2"
                 >
                     <PlayerControls />
-                    <PlayerProgress v-model="progress" :length="20" />
+                    <div
+                        class="flex justify-between w-full text-sm items-center gap-3"
+                    >
+                        <span>{{ msToHumanReadable(progress) }}</span>
+                        <PlayerProgress
+                            v-model="progress"
+                            :length="length"
+                            class="flex-1"
+                        />
+                        <span>{{ msToHumanReadable(length) }}</span>
+                    </div>
                 </div>
             </template>
         </MainLayout>
@@ -23,5 +33,14 @@ import PlayerProgress from "./components/player/PlayerProgress.vue";
 
 import { ref } from "vue";
 
-const progress = ref<number>(15);
+const progress = ref<number>(15 * 1000);
+const length = ref<number>(200 * 1000);
+
+function msToHumanReadable(ms: number) {
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+}
 </script>

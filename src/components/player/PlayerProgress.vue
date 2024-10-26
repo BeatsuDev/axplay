@@ -1,7 +1,7 @@
 <template>
     <div
         ref="container"
-        class="relative w-full leading-[0] p-2 cursor-pointer select-none"
+        class="relative w-full leading-[0] py-2 cursor-pointer select-none"
         @mousedown="startScrubbing"
     >
         <progress
