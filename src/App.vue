@@ -1,7 +1,18 @@
 <template>
     <div class="h-screen bg-gray-900 text-gray-50">
         <MainLayout>
-            <template #aside> This is an aside </template>
+            <template #aside>
+                <div class="w-full h-full p-4">
+                    <img
+                        src="/axplay.png"
+                        alt="axplay"
+                        class="w-full max-w-48 mx-auto"
+                    />
+                    <NavigationButton class="w-full mt-4"
+                        >Import Music</NavigationButton
+                    >
+                </div>
+            </template>
             <template #main> <MusicCollectionPage /> </template>
             <template #footer>
                 <div
@@ -34,6 +45,7 @@ import MainLayout from "./layouts/MainLayout.vue";
 import MusicCollectionPage from "./pages/MusicCollectionPage.vue";
 import PlayerControls from "./components/player/PlayerControls.vue";
 import PlayerProgress from "./components/player/PlayerProgress.vue";
+import NavigationButton from "./components/NavigationButton.vue";
 
 import { ref } from "vue";
 
