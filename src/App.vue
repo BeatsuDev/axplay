@@ -4,8 +4,10 @@
             <template #aside> This is an aside </template>
             <template #main> <MusicCollectionPage /> </template>
             <template #footer>
-                <PlayerControls />
-                <PlayerProgress v-model="progress" max="20" />
+                <div class="flex flex-col justify-center items-center p-4">
+                    <PlayerControls />
+                    <PlayerProgress v-model="progress" max="20" />
+                </div>
             </template>
         </MainLayout>
     </div>
