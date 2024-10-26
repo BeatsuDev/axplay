@@ -22,7 +22,7 @@
                 <tr
                     v-for="music in collection"
                     :key="music.filePath"
-                    @click="$emit('selected', music)"
+                    @click="selected = music"
                     class="border-t-2 border-b-2 border-gray-700 hover:bg-gray-700 cursor-pointer [&>*]:p-2"
                 >
                     <td class="text-sm text-gray-400">
@@ -50,7 +50,5 @@ function formatTime(seconds: number) {
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
 
-defineEmits<{
-    (e: "selected", music: MusicData): void;
-}>();
+const selected = defineModel<MusicData | null>();
 </script>

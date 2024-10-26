@@ -16,7 +16,10 @@
                 </div>
             </template>
             <template #main>
-                <MusicCollectionPage :collection="musicCollection" />
+                <MusicCollectionPage
+                    v-model="currentSong"
+                    :collection="musicCollection"
+                />
             </template>
             <template #footer>
                 <div
@@ -30,13 +33,15 @@
                     <div
                         class="flex justify-between w-full text-sm items-center gap-3"
                     >
-                        <span>{{ msToHumanReadable(progress) }}</span>
+                        <span>{{ formatTime(progress) }}</span>
                         <PlayerProgress
                             v-model="progress"
-                            :length="length"
+                            :length="currentSong?.duration ?? 0"
                             class="flex-1"
                         />
-                        <span>{{ msToHumanReadable(length) }}</span>
+                        <span>{{
+                            formatTime(currentSong?.duration ?? 0)
+                        }}</span>
                     </div>
                 </div>
             </template>
@@ -55,19 +60,11 @@ import { ref } from "vue";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readFile } from "@tauri-apps/plugin-fs";
 import { parseBuffer } from "music-metadata";
-import { MusicFilePath, useMusicCollection } from "./composables/music";
-
-// Player state
-const progress = ref<number>(15 * 1000);
-const length = ref<number>(200 * 1000);
-
-function msToHumanReadable(ms: number) {
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-}
+import {
+    MusicFilePath,
+    useMusicCollection,
+    type MusicData,
+} from "./composables/music";
 
 // Import music logic
 async function addMusictoCollection() {
@@ -102,4 +99,15 @@ async function addMusictoCollection() {
 // Storing music logic
 const { data: musicCollection, save: saveCollection } =
     useMusicCollection("collection.json");
+
+// Player state
+const currentSong = ref<MusicData | null>(null);
+
+const progress = ref<number>(0);
+
+function formatTime(seconds: number) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+}
 </script>
