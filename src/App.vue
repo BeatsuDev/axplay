@@ -9,7 +9,7 @@
                         class="w-full max-w-48 mx-auto"
                     />
                     <NavigationButton
-                        @click="addMusictoCollection"
+                        @click="addMusicToCollection"
                         class="w-full mt-4"
                         >Import Music</NavigationButton
                     >
@@ -90,7 +90,7 @@ import {
 } from "./composables/music";
 
 // Import music logic
-async function addMusictoCollection() {
+async function addMusicToCollection() {
     const selected = await open({
         multiple: false,
         directory: false,
