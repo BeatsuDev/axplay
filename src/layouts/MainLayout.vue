@@ -4,7 +4,7 @@ import ResizableElement from "@/components/ResizableElement.vue";
 
 <template>
     <div class="flex flex-col h-full">
-        <div class="flex flex-1 items-stretch">
+        <div class="flex flex-1 items-stretch min-h-0">
             <ResizableElement
                 edge="right"
                 class="border-r-2 border-gray-700 min-w-36 max-w-[50%]"
@@ -13,7 +13,7 @@ import ResizableElement from "@/components/ResizableElement.vue";
                     <slot name="aside"></slot>
                 </aside>
             </ResizableElement>
-            <main class="flex-1">
+            <main class="flex-1 min-h-0 overflow-auto">
                 <slot name="main"></slot>
             </main>
         </div>

@@ -1,9 +1,11 @@
 <template>
-    <div class="flex flex-col align-center w-full h-full bg-gray-800">
-        <h1 class="text-3xl text-center p-4 text-primary-500">
+    <div class="flex flex-col align-center w-full bg-gray-800">
+        <h1
+            class="text-3xl text-center p-4 text-primary-500 sticky top-0 backdrop-blur"
+        >
             Music Collection
         </h1>
-        <table v-if="collection.length > 0">
+        <table v-if="collection.length > 0" class="overflow-auto">
             <colgroup>
                 <col style="width: 20%" />
                 <col style="width: 40%" />
