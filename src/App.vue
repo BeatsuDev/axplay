@@ -117,6 +117,11 @@ async function addMusicToCollection() {
     ]) as [MusicFilePath, IAudioMetadata][];
 
     for (const [musicFilePath, metadata] of zipped) {
+        if (
+            musicCollection.value.map((m) => m.filePath).includes(musicFilePath)
+        ) {
+            continue;
+        }
         musicCollection.value.push({
             filePath: musicFilePath,
             title: metadata.common.title || "Unknown",
