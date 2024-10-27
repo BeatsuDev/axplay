@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col align-center w-full bg-gray-800">
+    <div class="flex flex-col align-center w-full min-h-full bg-gray-800">
         <h1
             class="text-3xl text-center p-4 text-primary-500 sticky top-0 backdrop-blur"
         >
