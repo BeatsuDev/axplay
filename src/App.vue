@@ -42,7 +42,16 @@
                             v-model:repeat="repeat"
                             v-model:shuffle="shuffle"
                         />
-                        <div class="flex-1 flex justify-end"></div>
+                        <div class="flex-1 flex justify-end items-center">
+                            <SpeakerWaveIcon
+                                class="h-5 mr-1.5 translate-y-0.5"
+                            />
+                            <PlayerProgress
+                                v-model="volume"
+                                :length="1"
+                                class="min-w-32 w-1/3 [&>*::-webkit-progress-value]:!bg-secondary-500"
+                            />
+                        </div>
                     </div>
                     <div
                         class="flex justify-between w-full text-sm items-center gap-3"
@@ -75,6 +84,7 @@ import MusicCollectionPage from "./pages/MusicCollectionPage.vue";
 import PlayerControls from "./components/player/PlayerControls.vue";
 import PlayerProgress from "./components/player/PlayerProgress.vue";
 import NavigationButton from "./components/NavigationButton.vue";
+import { SpeakerWaveIcon } from "@heroicons/vue/16/solid";
 
 import { ref, watch } from "vue";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -154,7 +164,7 @@ function formatTime(seconds: number) {
 // Audio
 const audioElement = ref<HTMLAudioElement | null>(null);
 
-const { playing, currentTime } = useMediaControls(audioElement, {
+const { playing, currentTime, volume } = useMediaControls(audioElement, {
     src: currentSong.value
         ? convertFileSrc(currentSong.value.filePath)
         : undefined,
