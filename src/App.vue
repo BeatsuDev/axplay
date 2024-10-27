@@ -80,7 +80,7 @@ import { ref, watch } from "vue";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readFile } from "@tauri-apps/plugin-fs";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { parseBuffer } from "music-metadata";
+import { IAudioMetadata, parseBuffer } from "music-metadata";
 import { useMediaControls } from "@vueuse/core";
 
 import {
@@ -92,29 +92,40 @@ import {
 // Import music logic
 async function addMusicToCollection() {
     const selected = await open({
-        multiple: false,
+        multiple: true,
         directory: false,
         filters: [{ name: "Music", extensions: ["mp3", "wav", "flac", "ogg"] }],
     });
 
     if (!selected) return;
-    if (
-        !["mp3", "wav", "flac", "ogg"].includes(selected.split(".").pop() ?? "")
-    )
-        return;
 
-    const musicFilePath = selected as MusicFilePath;
-    const fileData = await readFile(musicFilePath);
-    const metadata = await parseBuffer(fileData);
+    function isMusicFile(selected: string) {
+        return ["mp3", "wav", "flac", "ogg"].includes(
+            selected.split(".").pop() ?? ""
+        );
+    }
 
-    musicCollection.value.push({
-        filePath: musicFilePath,
-        title: metadata.common.title || "Unknown",
-        artists: metadata.common.artists || ["Unknown"],
-        album: metadata.common.album || "Unknown",
-        duration: metadata.format.duration || 0,
-        sampleRate: metadata.format.sampleRate || 0,
-    });
+    const musicFiles = selected.filter(isMusicFile) as MusicFilePath[];
+    const metadataPromises = musicFiles.map(
+        async (path) => await parseBuffer(await readFile(path))
+    );
+
+    const metadatas = await Promise.all(metadataPromises);
+    const zipped = musicFiles.map((path, index) => [
+        path,
+        metadatas[index],
+    ]) as [MusicFilePath, IAudioMetadata][];
+
+    for (const [musicFilePath, metadata] of zipped) {
+        musicCollection.value.push({
+            filePath: musicFilePath,
+            title: metadata.common.title || "Unknown",
+            artists: metadata.common.artists || ["Unknown"],
+            album: metadata.common.album || "Unknown",
+            duration: metadata.format.duration || 0,
+            sampleRate: metadata.format.sampleRate || 0,
+        });
+    }
 
     saveCollection();
 }
