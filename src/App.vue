@@ -25,21 +25,31 @@
                 <div
                     class="flex flex-col justify-between h-full items-center p-4 pt-2"
                 >
-                    <div class="flex justify-between w-full">
-                        <div>Left controls</div>
+                    <div class="flex justify-between items-center w-full">
+                        <div class="flex-1">
+                            <div v-if="currentSong">
+                                <p>
+                                    {{ currentSong?.title }}
+                                </p>
+                                <p class="text-sm text-gray-400">
+                                    {{ currentSong?.artists?.join(", ") }}
+                                </p>
+                            </div>
+                            <p v-else>No song selected</p>
+                        </div>
                         <PlayerControls
                             v-model:playing="playing"
                             v-model:repeat="repeat"
                             v-model:shuffle="shuffle"
                         />
-                        <div>Right controls</div>
+                        <div class="flex-1 flex justify-end"></div>
                     </div>
                     <div
                         class="flex justify-between w-full text-sm items-center gap-3"
                     >
-                        <span>{{ formatTime(progress) }}</span>
+                        <span>{{ formatTime(currentTime) }}</span>
                         <PlayerProgress
-                            v-model="progress"
+                            v-model="currentTime"
                             :length="currentSong?.duration ?? 0"
                             class="flex-1"
                         />
@@ -50,6 +60,12 @@
                 </div>
             </template>
         </MainLayout>
+        <audio ref="audioElement" v-if="currentSong">
+            <source
+                :src="convertFileSrc(currentSong.filePath)"
+                :type="'audio/' + currentSong.filePath.split('.').pop()"
+            />
+        </audio>
     </div>
 </template>
 
@@ -60,10 +76,13 @@ import PlayerControls from "./components/player/PlayerControls.vue";
 import PlayerProgress from "./components/player/PlayerProgress.vue";
 import NavigationButton from "./components/NavigationButton.vue";
 
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readFile } from "@tauri-apps/plugin-fs";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import { parseBuffer } from "music-metadata";
+import { useMediaControls } from "@vueuse/core";
+
 import {
     MusicFilePath,
     useMusicCollection,
@@ -107,8 +126,6 @@ const { data: musicCollection, save: saveCollection } =
 // Player state
 const currentSong = ref<MusicData | null>(null);
 
-const progress = ref<number>(0);
-const playing = ref<boolean>(false);
 const repeat = ref<"none" | "one" | "all">("none");
 const shuffle = ref<boolean>(false);
 
@@ -117,4 +134,30 @@ function formatTime(seconds: number) {
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
+
+// Audio
+const audioElement = ref<HTMLAudioElement | null>(null);
+
+const { playing, currentTime } = useMediaControls(audioElement, {
+    src: currentSong.value
+        ? convertFileSrc(currentSong.value.filePath)
+        : undefined,
+});
+
+watch(currentSong, (newSong) => {
+    currentTime.value = 0;
+    let playingState = playing.value;
+
+    if (newSong && audioElement.value) {
+        audioElement.value.src = convertFileSrc(newSong.filePath);
+        audioElement.value.load();
+    }
+
+    // TODO: Please find a better way of handling this...
+    if (playingState) {
+        setTimeout(() => {
+            playing.value = true;
+        }, 50);
+    }
+});
 </script>
